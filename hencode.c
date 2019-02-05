@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		}
-		write(fdout, wbuff, k);
+		write(fdout, wbuff, k + 1);
 	}
 	free(codes);
 	close(fdin);
