@@ -9,13 +9,12 @@
 
 CharCode *get_codes(int fdin, int *uniq_chars) {
 	int histogram[256] = { 0 };
-	int i, j;
+	int code, i, j;
 	ssize_t num;
 	int max_idx;
 	Node *node_arr;
 	Node *node;
 	LinkedList list = { 0 };
-	char *code;
 	CharCode *codes;
 	unsigned char buff[SIZE];
 	while ((num = read(fdin, buff, SIZE)) > 0) {
@@ -50,13 +49,11 @@ CharCode *get_codes(int fdin, int *uniq_chars) {
 	to_tree(&list);
 	i = 0;
 	j = 0;
-	code = (char*)malloc(*uniq_chars * sizeof(char));
-	code[0] = '\0';
+	code = 0;
 	codes = (CharCode*)malloc(*uniq_chars * sizeof(CharCode));
 	traverse(list.head, codes, code, i, &j);
 	sort_codes(codes, *uniq_chars);
 	free(node_arr);
-	free(code);
 	free_all(list.head);
 	return codes;
 }
@@ -89,25 +86,20 @@ void free_all(Node *node) {
 	free(node);
 }
 
-void traverse(Node *node, CharCode *codes, char *code, int i, int *j) {
+void traverse(Node *node, CharCode *codes, int code, int i, int *j) {
 	if (!node->left && !node->right) {
-		codes[*j].code = (char*)malloc((strlen(code) + 1) *
-			sizeof(char));
+		codes[*j].code = code; 
 		codes[*j].count = node->freq;
 		codes[*j].c = node->c;
-		strcpy(codes[*j].code, code);
+		codes[*j].digits = i;
 		(*j)++;
 		return;
 	}
 	if (node->left != NULL) {
-		code[i] = '0';
-		code[i + 1] = '\0';
-		traverse(node->left, codes, code, i + 1, j);
+		traverse(node->left, codes, code << 1, i + 1, j);
 	}
 	if (node->right != NULL) {
-		code[i] = '1';
-		code[i + 1] = '\0';
-		traverse(node->right, codes, code, i + 1, j);
+		traverse(node->right, codes, (code << 1) + 1, i + 1, j);
 	}
 }
 

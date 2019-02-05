@@ -6,12 +6,16 @@
 #include <unistd.h>
 #include <stdint.h>
 #include "htable.h"
+#include "hencode.h"
 #define SIZE 4096
 
 int main(int argc, char *argv[]) {
 	CharCode *codes;
-	int fdin, fdout, uniq_chars, i, j;
-	char buff[SIZE];
+	int fdin, fdout, uniq_chars, offset, i, j, k;
+	int bit_counter = 8;
+	char rbuff[SIZE] = { 0 };
+	uint8_t wbuff[SIZE] = { 0 };
+	uint32_t mask;
 	ssize_t num;
 	if (-1 == (fdin = open(argv[1], O_RDONLY))) {
 		perror(argv[1]);
@@ -27,29 +31,45 @@ int main(int argc, char *argv[]) {
 		write(fdout, &codes[i].c, sizeof(uint8_t));
 		write(fdout, &codes[i].count, sizeof(uint32_t));
 	}
-	while ((num = read(fdin, buff, num)) > 0) {
+	lseek(fdin, 0, SEEK_SET);
+	while ((num = read(fdin, rbuff, SIZE)) > 0) {
+		k = 0;
 		for (i = 0; i < num; i++) {
-			for (j = 0; i < uniq_chars; j++) {
-				if (codes[j].c == buff[i]) {
-					buff[i] = strtol(codes[i].code,
-						NULL, 2);
+			for (j = 0; j < uniq_chars; j++) {
+				if (codes[j].c == rbuff[i]) {
+					mask = codes[j].code;
+					offset = bit_counter - codes[j].digits;
+					if (offset >= 0) {
+						mask <<= offset;
+					}
+					else {
+						wbuff[k + 1] |=
+							(all_ones(-offset) &
+							mask) << (8 + offset);
+						mask >>= -offset;
+					}
+					bit_counter -= codes[j].digits;
+					wbuff[k] |= mask;
+					if (offset <= 0) {
+						bit_counter = 8 + offset;
+						k++;
+					}
 					break;
 				}
 			}
 		}
-		write(fdout, buff, SIZE);
+		write(fdout, wbuff, k);
 	}
 	free(codes);
 	close(fdin);
 	return 0;
 }
 
-char *str_slice(char *src, int start, int end) {
+int all_ones(int n) {
 	int i;
-	char *new = (char*)malloc(end - start + 2);
-	for (i = start; i <= end; i++) {
-		new[i] = src[i];
+	int total = 1;
+	for (i = 0; i <= n; i++) {
+		total *= 2;
 	}
-	new[i] = '\0';
-	return new;
+	return total - 1;
 }

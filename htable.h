@@ -10,7 +10,6 @@ typedef struct code CharCode;
 struct node {
 	int c;
 	int freq;
-	char *code;
 	Node *next;
 	Node *left;
 	Node *right;
@@ -24,14 +23,15 @@ struct linkedlist {
 struct code {
 	int c;
 	int count;
-	char *code;
+	int code;
+	int digits;
 };
 
 CharCode *get_codes(int, int*);
 
 void free_all(Node*);
 
-void traverse(Node*, CharCode*, char*, int, int*);
+void traverse(Node*, CharCode*, int, int, int*);
 
 void append(LinkedList*, Node*);
 
