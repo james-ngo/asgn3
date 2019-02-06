@@ -59,10 +59,19 @@ int main(int argc, char *argv[]) {
 			}
 		}
 		write(fdout, wbuff, k + 1);
+		clear_arr(wbuff, SIZE);
+		bit_counter = 8;
 	}
 	free(codes);
 	close(fdin);
 	return 0;
+}
+
+void clear_arr(uint8_t *arr, int size) {
+	int i;
+	for (i = 0; i < size; i++) {
+		arr[i] = 0;
+	}
 }
 
 int all_ones(int n) {
