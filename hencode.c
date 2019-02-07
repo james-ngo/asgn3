@@ -58,9 +58,11 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		}
-		write(fdout, wbuff, k + 1);
+		write(fdout, wbuff, k);
+		wbuff[0] = wbuff[k];
 		clear_arr(wbuff, SIZE);
 	}
+	write(fdout, wbuff, 1);
 	free(codes);
 	close(fdin);
 	return 0;
@@ -68,7 +70,7 @@ int main(int argc, char *argv[]) {
 
 void clear_arr(uint8_t *arr, int size) {
 	int i;
-	for (i = 0; i < size; i++) {
+	for (i = 1; i < size; i++) {
 		arr[i] = 0;
 	}
 }
