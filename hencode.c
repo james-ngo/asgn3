@@ -39,28 +39,27 @@ int main(int argc, char *argv[]) {
 				if (codes[j].c == rbuff[i]) {
 					mask = codes[j].code;
 					offset = bit_counter - codes[j].digits;
-					if (offset >= 0) {
-						mask <<= offset;
+					while (1) {
+						if (offset >= 0) {
+							wbuff[k] |=
+								mask << offset;
+							break;
+						}
+						else {
+							wbuff[k++] |=
+								mask >>-offset;
+							mask &= (all_ones(
+								-offset));
+							offset += 8;
+						}
 					}
-					else {
-						wbuff[k + 1] |=
-							(all_ones(-offset) &
-							mask) << (8 + offset);
-						mask >>= -offset;
-					}
-					bit_counter -= codes[j].digits;
-					wbuff[k] |= mask;
-					if (offset <= 0) {
-						bit_counter = 8 + offset;
-						k++;
-					}
+					bit_counter = offset;
 					break;
 				}
 			}
 		}
 		write(fdout, wbuff, k + 1);
 		clear_arr(wbuff, SIZE);
-		bit_counter = 8;
 	}
 	free(codes);
 	close(fdin);

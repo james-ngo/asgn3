@@ -148,7 +148,7 @@ void insert(LinkedList *list, Node *node) {
 	}
 	if (node->freq < current_node->freq ||
 		(node->freq == current_node->freq &&
-		node->c < current_node->c)) {
+		node->c <= current_node->c)) {
 		node->next = current_node;
 		list->head = node;
 		return;
