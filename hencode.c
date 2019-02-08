@@ -48,8 +48,8 @@ int main(int argc, char *argv[]) {
 						else {
 							wbuff[k++] |=
 								mask >>-offset;
-							mask &= (all_ones(
-								-offset));
+							mask &= all_ones(
+								-offset);
 							offset += 8;
 						}
 					}
