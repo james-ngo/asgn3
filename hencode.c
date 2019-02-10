@@ -62,7 +62,8 @@ int main(int argc, char *argv[]) {
 		wbuff[0] = wbuff[k];
 		clear_arr(wbuff, SIZE);
 	}
-	write(fdout, wbuff, 1);
+	if (uniq_chars > 1)
+		write(fdout, wbuff, 1);
 	free(codes);
 	close(fdin);
 	return 0;

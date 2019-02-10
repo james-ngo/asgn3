@@ -123,6 +123,9 @@ int min(Node *node_arr, int n) {
 }
 
 void to_tree(LinkedList *list) {
+	if (!list->head) {
+		return;
+	}
 	while (list->head->next) {
 		treeify(list);
 	}
