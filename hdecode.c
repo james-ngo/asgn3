@@ -12,7 +12,7 @@
 int main(int argc, char *argv[]) {
 	int fdin, fdout, uniq_chars, max_idx, i, j, k;
 	uint8_t rbuff[SIZE];
-	uint8_t wbuff[SIZE];
+	unsigned char wbuff[SIZE];
 	uint32_t int32_buff[1];
 	ssize_t num;
 	Node *node;
@@ -54,6 +54,12 @@ int main(int argc, char *argv[]) {
 	}
 	to_tree(&list);
 	node = list.head;
+	if (uniq_chars == 1) {
+		for (i = 0; i < list.head->freq; i++) {
+			wbuff[i] = list.head->c;
+		}
+		write(fdout, wbuff, i);
+	}
 	while ((num = read(fdin, rbuff, SIZE)) > 0) {
 		k = 0;
 		for (i = 0; i < num; i++) {
@@ -65,8 +71,12 @@ int main(int argc, char *argv[]) {
 				else {
 					node = node->left;
 				}
-				if (node->c) {
+				if (node->c && node->freq) {
 					wbuff[k++] = node->c;
+					node->freq--;
+					node = list.head;
+				}
+				else if (!node->freq) {
 					node = list.head;
 				}
 			}

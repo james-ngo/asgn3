@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
 	CharCode *codes;
 	int fdin, fdout, uniq_chars, offset, i, j, k;
 	int bit_counter = 8;
-	char rbuff[SIZE] = { 0 };
+	unsigned char rbuff[SIZE] = { 0 };
 	uint8_t wbuff[SIZE] = { 0 };
 	uint32_t mask;
 	ssize_t num;
