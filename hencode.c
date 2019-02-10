@@ -25,13 +25,24 @@ int main(int argc, char *argv[]) {
 		S_IRUSR | S_IWUSR))) {
 		fdout = STDOUT_FILENO;
 	}
+	/* codes will be an array of character-code pairings.
+ 	 */
 	codes = get_codes(fdin, &uniq_chars);
 	write(fdout, &uniq_chars, sizeof(uint32_t));
+	/* Create header.
+	 */
 	for (i = 0; i < uniq_chars; i++) {
 		write(fdout, &codes[i].c, sizeof(uint8_t));
 		write(fdout, &codes[i].count, sizeof(uint32_t));
 	}
+	/* Seek back to beginning of file since we are at the end of the file
+	 * as a result of the get_codes() call.
+	 */
 	lseek(fdin, 0, SEEK_SET);
+	/* This loop reads into a buffer and reads characters from the buffer.
+	 * Every character's code is found and written into a a separate
+	 * buffer that we write from.
+	 */
 	while ((num = read(fdin, rbuff, SIZE)) > 0) {
 		k = 0;
 		for (i = 0; i < num; i++) {
@@ -70,6 +81,8 @@ int main(int argc, char *argv[]) {
 }
 
 void clear_arr(uint8_t *arr, int size) {
+	/* Reinitializes the array to all zeroes.
+	 */
 	int i;
 	for (i = 1; i < size; i++) {
 		arr[i] = 0;
@@ -77,6 +90,8 @@ void clear_arr(uint8_t *arr, int size) {
 }
 
 int all_ones(int n) {
+	/* Returns a number that is equal to n 1's in binary.
+	 */
 	int i;
 	int total = 1;
 	for (i = 0; i <= n; i++) {

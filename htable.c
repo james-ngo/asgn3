@@ -17,6 +17,9 @@ CharCode *get_codes(int fdin, int *uniq_chars) {
 	LinkedList list = { 0 };
 	CharCode *codes;
 	unsigned char buff[SIZE];
+	/* Count characters and store in an array where the characters are the
+	 * indices and the elements of the array are the frequencies.
+	 */
 	while ((num = read(fdin, buff, SIZE)) > 0) {
 		for (i = 0; i < num; i++) {
 			if (!histogram[(int)buff[i]]) {
@@ -30,6 +33,8 @@ CharCode *get_codes(int fdin, int *uniq_chars) {
 	}
 	node_arr = (Node*)malloc(*uniq_chars * sizeof(Node));
 	j = 0;
+	/* Create an array of nodes of characters that appear in the file
+      	 */
 	for (i = 0; i < 256; i++) {
 		if (histogram[i]) {
 			node_arr[j].c = i;
@@ -38,6 +43,8 @@ CharCode *get_codes(int fdin, int *uniq_chars) {
 		}
 	}
 	max_idx = (*uniq_chars);
+	/* Append nodes to a linked list by order of character frequency.
+ 	 */
 	for (i = 0; i < *uniq_chars; i++) {
 		node = (Node*)malloc(sizeof(Node));
 		node->c = node_arr[min(node_arr, max_idx)].c;
@@ -63,6 +70,8 @@ void sort_codes(CharCode *codes, int n) {
 	int j;
 	CharCode temp;
 	int lowest;
+	/* Sort CharCodes by character ASCII value using selection sort.
+ 	 */
 	for (i = 0; i < n - 1; i++) {
 		lowest = i;
 		for (j = i + 1; j < n; j++) {
@@ -77,6 +86,8 @@ void sort_codes(CharCode *codes, int n) {
 }
 
 void free_all(Node *node) {
+	/* Free all nodes by traversing recursively.
+ 	 */
 	if (node->left != NULL) {
 		free_all(node->left);
 	}
@@ -87,6 +98,9 @@ void free_all(Node *node) {
 }
 
 void traverse(Node *node, CharCode *codes, int code, int i, int *j) {
+	/* Traverse the tree recursively, maipulating bits to modify code.
+ 	 * We keep track of digits to know how to pad zeroes.
+ 	 */
 	if (!node->left && !node->right) {
 		codes[*j].code = code; 
 		codes[*j].count = node->freq;
@@ -104,6 +118,9 @@ void traverse(Node *node, CharCode *codes, int code, int i, int *j) {
 }
 
 void remove_at(Node *node_arr, int i, int n) {
+	/* Function used to remove a specific element in an array by shifting
+	 * all other elements over.
+	 */
 	for (; i < n - 1; i++) {
 		node_arr[i] = node_arr[i + 1];
 	}
@@ -123,6 +140,8 @@ int min(Node *node_arr, int n) {
 }
 
 void to_tree(LinkedList *list) {
+	/* Treeifies until there is only one node in the list.
+ 	 */
 	if (!list->head) {
 		return;
 	}
@@ -132,6 +151,10 @@ void to_tree(LinkedList *list) {
 }
 
 void treeify(LinkedList *list) {
+	/* Removes first two nodes in the list and creates a new node that
+	 * is the parent of the two nodes. Then the parent node is inserted
+	 * into the list.
+	 */
 	Node *new_node = (Node*)malloc(sizeof(Node));
 	new_node->c = '\0';
 	new_node->left = list->head;
