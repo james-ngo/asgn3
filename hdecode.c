@@ -31,11 +31,11 @@ int main(int argc, char *argv[]) {
 		S_IRUSR | S_IWUSR))) {
 		fdout = STDOUT_FILENO;
 	}
-	if (read(fdin, rbuff, 4) <= 0) {
+	if (read(fdin, int32_buff, 4) <= 0) {
 		perror("bummer\n");
 		exit(EXIT_FAILURE);
 	}
-	uniq_chars = rbuff[0];
+	uniq_chars = int32_buff[0];
 	node_arr = (Node*)malloc(sizeof(Node) * uniq_chars);
 	for (i = 0; i < uniq_chars; i++) {
 		read(fdin, rbuff, 1);
@@ -71,7 +71,8 @@ int main(int argc, char *argv[]) {
 				else {
 					node = node->left;
 				}
-				if (node->c && node->freq) {
+				if (!node->left &&
+					!node-> right && node->freq) {
 					wbuff[k++] = node->c;
 					node->freq--;
 					node = list.head;
