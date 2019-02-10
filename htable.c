@@ -88,6 +88,9 @@ void sort_codes(CharCode *codes, int n) {
 void free_all(Node *node) {
 	/* Free all nodes by traversing recursively.
  	 */
+	if (!node) {
+		return;
+	}
 	if (node->left != NULL) {
 		free_all(node->left);
 	}
